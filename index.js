@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     let upTimerId;
     let downTimerId;
     let isJumping = true;
+    let isGoingRight = false;
+    let isGoingLeft = false;
+    let leftTimerId ;
+    let rightTimerId ;
+
     
 
     function createDoodler() {
@@ -106,13 +111,57 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     function control(e){
         if(e.key === "ArrowLeft"){
-            //move left
+            moveLeft();
         }else if(e.key === "ArrowRight"){
+            moveRight();
 
         }else if(e.key ==="ArrowUp"){
+            moveStraight();
 
         }
     }
+
+
+    function moveLeft() {
+        if (isGoingRight) {
+            clearInterval(rightTimerId)
+            isGoingRight = false
+        }
+        isGoingLeft = true
+        leftTimerId = setInterval(function () {
+            if (doodlerLeftSpace >= 0) {
+              console.log('going left')
+              doodlerLeftSpace -=5
+               doodler.style.left = doodlerLeftSpace + 'px'
+            } else moveRight()
+        },20)
+      }
+
+
+    
+      function moveRight() {
+        if (isGoingLeft) {
+            clearInterval(leftTimerId)
+            isGoingLeft = false
+        }
+        isGoingRight = true
+        rightTimerId = setInterval(function () {
+          //changed to 313 to fit doodle image
+          if (doodlerLeftSpace <= 313) {
+            console.log('going right')
+            doodlerLeftSpace +=5
+            doodler.style.left = doodlerLeftSpace + 'px'
+          } else moveLeft()
+        },20)
+      }
+      function moveStraight(){
+        isGoingRight =false;
+        isGoingLeft = false ;
+        clearInterval(rightTimerId);
+        clearInterval(leftTimerId);
+
+      }
+      
 
     function start(){
         if (!isGameOver ){
@@ -121,6 +170,7 @@ document.addEventListener('DOMContentLoaded',()=>{
             movePlatforms();
             setInterval(movePlatforms,30);
             jump();
+            document.addEventListener('keyup',control);
         }
     }
 
